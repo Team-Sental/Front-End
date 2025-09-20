@@ -1,0 +1,25 @@
+{
+  "venues": [
+    { "name": "entry_gate", "current": 120, "capacity": 300 },
+    { "name": "food_court", "current": 80, "capacity": 200 },
+    { "name": "parking", "current": 150, "capacity": 300 },
+    { "name": "evacuation_zone", "current": 50, "capacity": 500 },
+    { "name": "seating_area", "current": 200, "capacity": 400 },
+    { "name": "main_stage", "current": 500, "capacity": 1000 },
+    { "name": "vendor_area", "current": 75, "capacity": 200 },
+    { "name": "medical_station", "current": 20, "capacity": 100 },
+    { "name": "transport_hub", "current": 60, "capacity": 200 },
+    { "name": "restroom_1", "current": 15, "capacity": 50 },
+    { "name": "restroom_2", "current": 25, "capacity": 60 },
+    { "name": "restroom_3", "current": 10, "capacity": 40 }
+  ],
+  "attendance": 1305,
+  "capacity": 3350,
+  "graphData": [
+    { "time": "10:00", "predicted": 200, "actual": 180 },
+    { "time": "11:00", "predicted": 400, "actual": 350 },
+    { "time": "12:00", "predicted": 600, "actual": 620 },
+    { "time": "13:00", "predicted": 800, "actual": 780 },
+    { "time": "14:00", "predicted": 1000, "actual": 950 }
+  ]
+}
