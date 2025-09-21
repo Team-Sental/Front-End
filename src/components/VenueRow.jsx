@@ -3,7 +3,13 @@ import { getBarColor } from "../utils/color";
 
 export function VenueRow({ venues, selected, onSelect }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0,1fr))", gap: 12 }}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(5, minmax(0,1fr))",
+        gap: 12,
+      }}
+    >
       {venues.map((v) => {
         const pct = v.capacity
           ? Math.min(100, Math.round((v.current / v.capacity) * 100))
@@ -52,7 +58,11 @@ export function VenueRow({ venues, selected, onSelect }) {
                 marginTop: 4,
               }}
             >
-              <svg width={100} height={100} style={{ transform: "rotate(-90deg)" }}>
+              <svg
+                width={100}
+                height={100}
+                style={{ transform: "rotate(-90deg)" }}
+              >
                 <circle
                   cx={50}
                   cy={50}
