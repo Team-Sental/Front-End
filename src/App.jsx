@@ -5,6 +5,7 @@ import { VenueRow, AttendanceCard, ChartCard, RisksCard } from "./components";
 // Main App component
 export default function App() {
   const [data, setData] = useState(null);
+  const [selectedVenue, setSelectedVenue] = useState(null);
   const [clock, setClock] = useState(new Date());
   const [lastUpdated, setLastUpdated] = useState(null);
 
@@ -24,13 +25,6 @@ export default function App() {
         if (!res.ok) throw new Error("Network response was not ok");
         const d = await res.json();
 
-        const normalizedGraph = (d.graphData || []).map((item) => ({
-          time: item.time ?? item.day ?? "",
-          actual: typeof item.actual !== "undefined" ? item.actual : null,
-          predicted:
-            typeof item.predicted !== "undefined" ? item.predicted : null,
-        }));
-
         if (mounted) {
           setData({
             attendance: d.attendance ?? 0,
@@ -41,11 +35,13 @@ export default function App() {
                   : 0)) ||
               1,
             venues: Array.isArray(d.venues) ? d.venues : [],
-            graphData: normalizedGraph,
             risksSource: d.risks ?? null,
             weather: d.weather ?? null,
           });
           setLastUpdated(new Date().toLocaleString());
+          setSelectedVenue((prev) =>
+            d.venues?.some((v) => v.name === prev) ? prev : null
+          );
         }
       } catch (err) {
         console.error("Failed to load data.json:", err);
@@ -91,19 +87,25 @@ export default function App() {
   return (
     <div
       style={{
-        minHeight: "100vh",
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
         background: "#0b1220",
-        padding: 20,
         fontFamily: "Inter, Roboto, sans-serif",
-        overflowX: "hidden",
+        overflow: "hidden",
       }}
     >
       <div
         style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          padding: 20,
           width: "100%",
-          color: "#e6eef8",
           margin: "0 auto",
           maxWidth: "1800px",
+          color: "#e6eef8",
+          minHeight: 0,
         }}
       >
         {/* Top row: Date | Time | Weather | Wind | Attendance (spans 2) */}
@@ -198,31 +200,91 @@ export default function App() {
           </div>
         </div>
 
-        {/* Middle: Venue occupancy */}
-        <div style={{ marginBottom: 16 }}>
+        {/* Venues + Risks + Chart area (full-height grid section) */}
+        <div
+          style={{
+            flex: 1,
+            minHeight: 0,
+            display: "grid",
+            gridTemplateColumns: "repeat(6, minmax(0,1fr))",
+            gridTemplateRows: "min-content 1fr",
+            gap: 12,
+            alignItems: "stretch",
+          }}
+        >
+          {/* Left top: Venues */}
+          <div style={{ gridColumn: "span 4", minHeight: 0 }}>
+            <div
+              style={{
+                fontSize: 18,
+                color: "#fbbf24",
+                fontWeight: 800,
+                marginBottom: 12,
+              }}
+            >
+              Venue Occupancy
+            </div>
+            <VenueRow
+              venues={data.venues}
+              selected={selectedVenue}
+              onSelect={setSelectedVenue}
+            />
+          </div>
+
+          {/* Right: Risks spans two rows when chart present */}
           <div
             style={{
-              fontSize: 18,
-              color: "#fbbf24",
-              fontWeight: 800,
-              marginBottom: 12,
+              gridColumn: "span 2",
+              gridRow: "1 / span 2",
+              display: "flex",
+              flexDirection: "column",
+              minHeight: 0,
+              overflow: "hidden",
             }}
           >
-            Venue Occupancy
+            <div style={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
+              <RisksCard
+                jsonRisk={data.risksSource}
+                autoRisks={autoRisks}
+                lastUpdated={lastUpdated}
+              />
+            </div>
           </div>
-          <VenueRow venues={data.venues} />
-        </div>
 
-        {/* Bottom row: Chart + Risks */}
-        <div
-          style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 12 }}
-        >
-          <ChartCard graphData={data.graphData} />
-          <RisksCard
-            jsonRisk={data.risksSource}
-            autoRisks={autoRisks}
-            lastUpdated={lastUpdated}
-          />
+          {/* Chart appears beneath venues occupying same width (4 cols) */}
+          <div
+            style={{
+              gridColumn: "span 4",
+              minHeight: 0,
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            {selectedVenue ? (
+              <ChartCard
+                graphData={
+                  data.venues.find((v) => v.name === selectedVenue)?.graph || []
+                }
+                venueName={selectedVenue}
+              />
+            ) : (
+              <div
+                style={{
+                  background: "#111827",
+                  borderRadius: 10,
+                  padding: 16,
+                  color: "#64748b",
+                  fontSize: 14,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "100%",
+                }}
+              >
+                Select a venue to view its trend
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

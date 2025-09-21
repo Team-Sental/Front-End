@@ -1,15 +1,9 @@
 import React from "react";
 import { getBarColor } from "../utils/color";
 
-export function VenueRow({ venues }) {
+export function VenueRow({ venues, selected, onSelect }) {
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(6, minmax(0, 1fr))",
-        gap: 12,
-      }}
-    >
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0,1fr))", gap: 12 }}>
       {venues.map((v) => {
         const pct = v.capacity
           ? Math.min(100, Math.round((v.current / v.capacity) * 100))
@@ -17,6 +11,7 @@ export function VenueRow({ venues }) {
         const radius = 38; // circle radius
         const circumference = 2 * Math.PI * radius;
         const strokeDashoffset = circumference - (pct / 100) * circumference;
+        const isSelected = selected === v.name;
         return (
           <div
             key={v.name}
@@ -28,7 +23,14 @@ export function VenueRow({ venues }) {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
+              cursor: onSelect ? "pointer" : "default",
+              boxShadow: isSelected
+                ? "0 0 0 2px #f59e0b, 0 0 0 4px rgba(245,158,11,0.25)"
+                : "0 0 0 1px #1f2937",
+              transition: "box-shadow 0.25s ease, transform 0.25s ease",
+              transform: isSelected ? "translateY(-4px)" : "translateY(0)",
             }}
+            onClick={() => onSelect && onSelect(v.name)}
           >
             <div
               style={{
@@ -50,11 +52,7 @@ export function VenueRow({ venues }) {
                 marginTop: 4,
               }}
             >
-              <svg
-                width={100}
-                height={100}
-                style={{ transform: "rotate(-90deg)" }}
-              >
+              <svg width={100} height={100} style={{ transform: "rotate(-90deg)" }}>
                 <circle
                   cx={50}
                   cy={50}

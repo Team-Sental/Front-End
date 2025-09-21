@@ -94,7 +94,7 @@ function CustomTooltip({ active, payload, label }) {
   );
 }
 
-export function ChartCard({ graphData }) {
+export function ChartCard({ graphData, venueName }) {
   return (
     <div
       style={{
@@ -105,7 +105,9 @@ export function ChartCard({ graphData }) {
       }}
     >
       <div style={{ fontSize: 14, color: "#cbd5e1", marginBottom: 6 }}>
-        Attendance Trend
+        {venueName
+          ? venueName.replace(/_/g, " ") + " Trend"
+          : "Attendance Trend"}
       </div>
       <div style={{ height: 300 }}>
         <ResponsiveContainer width="100%" height="100%">
@@ -142,6 +144,11 @@ export function ChartCard({ graphData }) {
           </LineChart>
         </ResponsiveContainer>
       </div>
+      {(!graphData || graphData.length === 0) && (
+        <div style={{ fontSize: 12, color: "#64748b", marginTop: 8 }}>
+          No data for this venue.
+        </div>
+      )}
     </div>
   );
 }
