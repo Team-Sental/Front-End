@@ -63,6 +63,7 @@ function VenueRow({ venues }) {
 
 // Live attendance card
 function AttendanceCard({ attendance, capacity }) {
+  
   const percent = capacity ? Math.min(100, Math.round((attendance / capacity) * 100)) : 0;
   const color = getBarColor(percent);
 
